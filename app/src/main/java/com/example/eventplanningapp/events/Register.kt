@@ -1,14 +1,16 @@
 package com.example.eventplanner.events
 
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -84,10 +86,10 @@ fun Register(navController: NavController) {
                         onSuccess = {
                             Toast.makeText(
                                 context,
-                                "Registration Successful! Check your email for a welcome message.",
+                                "Registration Successful! Welcome to the app.",
                                 Toast.LENGTH_LONG
                             ).show()
-                            navController.navigate("login") {
+                            navController.navigate("home") { // Navigate to HomeScreen
                                 popUpTo("register") { inclusive = true }
                             }
                         },
@@ -112,6 +114,19 @@ fun Register(navController: NavController) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(errorMessage, color = MaterialTheme.colorScheme.error)
         }
+
+        // Link to Login page for users who already have an account
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "Already have an account? Login here",
+            color = MaterialTheme.colorScheme.primary,
+            textDecoration = TextDecoration.Underline,
+            modifier = Modifier.clickable {
+                navController.navigate("login") {
+                    popUpTo("register") { inclusive = true }
+                }
+            }
+        )
     }
 }
 
@@ -150,7 +165,7 @@ fun registerUser(
                                     if (emailTask.isSuccessful) {
                                         onSuccess()
                                     } else {
-                                        onError(emailTask.exception?.localizedMessage ?: "Email error")
+                                        onError(emailTask.exception?.localizedMessage ?: "Email verification error")
                                     }
                                 }
                         }
@@ -159,7 +174,12 @@ fun registerUser(
                         }
                 }
             } else {
-                onError(task.exception?.localizedMessage ?: "Registration failed")
+                // Handle Firebase-specific errors
+                val errorMessage = when (task.exception?.message) {
+                    "The email address is already in use by another account." -> "This email is already registered. Please log in."
+                    else -> task.exception?.localizedMessage ?: "Registration failed."
+                }
+                onError(errorMessage)
             }
             onLoading(false)
         }
@@ -168,4 +188,3 @@ fun registerUser(
             onLoading(false)
         }
 }
-

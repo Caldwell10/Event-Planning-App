@@ -1,4 +1,4 @@
-package com.example.eventplanner
+package com.example.eventplanningapp
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

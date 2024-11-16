@@ -1,4 +1,4 @@
-package com.example.eventplanner.events
+package com.example.eventplanningapp.events
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

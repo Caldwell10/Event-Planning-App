@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.eventplanner"
+    namespace = "com.example.eventplanningapp"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.eventplanner"
+        applicationId = "com.example.eventplanningapp"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -50,6 +50,7 @@ dependencies {
 
     // Jetpack Navigation for Compose
     implementation("androidx.navigation:navigation-compose:2.7.2")
+    implementation(libs.firebase.storage.ktx)
 
     // Testing dependencies
     testImplementation(libs.junit)
@@ -65,4 +66,5 @@ dependencies {
     // Hilt dependencies
     implementation(libs.dagger.hilt)
     kapt(libs.dagger.hilt.compiler)
+    implementation("io.coil-kt:coil-compose:2.4.0")
 }

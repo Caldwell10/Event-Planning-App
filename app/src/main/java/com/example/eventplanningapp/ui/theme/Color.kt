@@ -1,4 +1,4 @@
-package com.example.eventplanner.ui.theme
+package com.example.eventplanningapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

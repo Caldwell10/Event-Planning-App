@@ -12,7 +12,8 @@ hilt = "2.44"
 googleGmsGoogleServices = "4.4.2"
 firebaseAuth = "23.1.0"
 navigationRuntimeKtx = "2.8.3"
-firebaseFirestoreKtx = "25.1.1"                    # Dagger Hilt version (optional, if used)
+firebaseFirestoreKtx = "25.1.1"
+firebaseStorageKtx = "21.0.1"                    # Dagger Hilt version (optional, if used)
 
 [libraries]
 # Core and AndroidX libraries
@@ -39,6 +40,7 @@ dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", ve
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
+firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
