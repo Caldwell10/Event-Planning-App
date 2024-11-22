@@ -4,6 +4,7 @@
     package="com.example.eventplanningapp"> <!-- Add your package name here -->
 
     <application
+        android:name="com.example.eventplanningapp.services.notifications.OneSignalInitialization"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -13,6 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EventPlanner"
         tools:targetApi="31">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -20,7 +22,6 @@
             android:theme="@style/Theme.EventPlanner">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

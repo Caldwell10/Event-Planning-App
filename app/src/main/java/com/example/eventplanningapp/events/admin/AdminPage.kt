@@ -25,6 +25,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
+import java.io.IOException
 
 @Composable
 fun AdminPage(navController: NavController) {
@@ -119,6 +124,9 @@ fun AdminPage(navController: NavController) {
                                     "image" to imageUrl
                                 )
                             )
+                            // Send notification about the new event
+                            sendNewEventNotification(eventName, eventLocation, imageUrl)
+
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(context, "Event Created Successfully!", Toast.LENGTH_LONG).show()
                                 navController.navigate("home")
@@ -145,12 +153,14 @@ fun AdminPage(navController: NavController) {
     }
 }
 
+// Function to upload an image to Firebase Storage
 suspend fun uploadImageToStorage(storage: FirebaseStorage, uri: String): String {
     val storageRef = storage.reference.child("event_images/${System.currentTimeMillis()}.jpg")
     storageRef.putFile(Uri.parse(uri)).await()
     return storageRef.downloadUrl.await().toString()
 }
 
+// Function to load a bitmap from a URI
 fun loadBitmapFromUri(context: Context, uri: Uri): ImageBitmap? {
     return try {
         val inputStream = context.contentResolver.openInputStream(uri)
@@ -159,4 +169,35 @@ fun loadBitmapFromUri(context: Context, uri: Uri): ImageBitmap? {
     } catch (e: Exception) {
         null
     }
+}
+
+// Function to send a push notification using OneSignal REST API
+fun sendNewEventNotification(eventName: String, eventLocation: String, eventImageUrl: String) {
+    val client = OkHttpClient()
+
+    val jsonObject = JSONObject().apply {
+        put("app_id", "05e7aef1-a5a7-493c-bc65-f092d7253bff") // Replace with your OneSignal App ID
+        put("included_segments", arrayOf("Subscribed Users"))
+        put("headings", JSONObject().put("en", "New Event: $eventName"))
+        put("contents", JSONObject().put("en", "Check out the new event at $eventLocation!"))
+        put("big_picture", eventImageUrl) // Show the event image in the notification
+    }
+
+    val body = jsonObject.toString().toRequestBody("application/json".toMediaTypeOrNull())
+    val request = Request.Builder()
+        .url("https://onesignal.com/api/v1/notifications")
+        .post(body)
+        .addHeader("Authorization", "os_v2_app_axt254nfu5etzpdf6cjnojj376zex7lc52vu5vu25yv72qkuq6swljetgiesdygetl6fkrefimtzo6fko254kxtmxr7cuflbdfix63a") // Replace with your REST API Key
+        .addHeader("Content-Type", "application/json")
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            println("Failed to send notification: ${e.message}")
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            println("Notification sent successfully: ${response.body?.string()}")
+        }
+    })
 }

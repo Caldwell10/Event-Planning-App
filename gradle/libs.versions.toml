@@ -45,6 +45,6 @@ firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version = "1.9.22" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }

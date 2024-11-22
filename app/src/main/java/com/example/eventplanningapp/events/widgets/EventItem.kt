@@ -1,71 +1,77 @@
 package com.example.eventplanningapp.events.widgets
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil.ImageLoader
-import coil.request.ImageRequest
-import coil.request.SuccessResult
+import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.eventplanningapp.events.Event
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Composable
-fun EventItem(event: Event) {
+fun EventItem(event: Event, navController: NavController) {
     Card(
+        shape = RoundedCornerShape(16.dp), // Rounded corners for modern design
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            .padding(vertical = 8.dp)
+            .clickable {
+                // Encode the imageUrl for safe navigation
+                val encodedImageUrl = URLEncoder.encode(event.imageUrl, StandardCharsets.UTF_8.toString())
+                navController.navigate("eventDetail/${event.name}/${event.location}/${event.price}/${encodedImageUrl}")
+            },
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp), // Depth effect
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        )
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(text = event.name, style = MaterialTheme.typography.titleMedium)
-            Text(text = "Location: ${event.location}", style = MaterialTheme.typography.bodyMedium)
-            Text(text = "Price: $${event.price}", style = MaterialTheme.typography.bodyMedium)
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Event Image
+            AsyncImage(
+                model = event.imageUrl,
+                contentDescription = event.name,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(180.dp) // Consistent height for images
+            )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            // Event Details
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                // Event Name
+                Text(
+                    text = event.name,
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                    maxLines = 1
+                )
+                Spacer(modifier = Modifier.height(4.dp))
 
-            if (event.imageUrl.isNotEmpty()) {
-                val context = LocalContext.current
-                val bitmap = remember { mutableStateOf<Bitmap?>(null) }
+                // Event Location
+                Text(
+                    text = "Location: ${event.location}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Gray
+                )
+                Spacer(modifier = Modifier.height(8.dp))
 
-                LaunchedEffect(event.imageUrl) {
-                    bitmap.value = loadImage(context, event.imageUrl)
-                }
-
-                bitmap.value?.let {
-                    Image(
-                        bitmap = it.asImageBitmap(),
-                        contentDescription = event.name,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                    )
-                }
+                // Event Price
+                Text(
+                    text = "Price: $${event.price}",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
         }
-    }
-}
-
-suspend fun loadImage(context: Context, imageUrl: String): Bitmap? {
-    return withContext(Dispatchers.IO) {
-        val loader = ImageLoader(context)
-        val request = ImageRequest.Builder(context)
-            .data(imageUrl)
-            .build()
-        val result = (loader.execute(request) as? SuccessResult)?.drawable
-        (result as? BitmapDrawable)?.bitmap
     }
 }

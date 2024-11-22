@@ -3,11 +3,14 @@ package com.example.eventplanningapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.eventplanner.events.Register
+import androidx.navigation.navArgument
+import com.example.eventplanningapp.events.Register
 import com.example.eventplanningapp.admin.AdminPage
+import com.example.eventplanningapp.events.EventDetailScreen
 import com.example.eventplanningapp.events.HomeScreen
 import com.example.eventplanningapp.events.LandingPage
 import com.example.eventplanningapp.events.Login
@@ -32,11 +35,30 @@ class MainActivity : ComponentActivity() {
                     composable("register") {
                         Register(navController)
                     }
-                    composable("home"){
+                    composable("home") {
                         HomeScreen(navController)
                     }
                     composable("admin") {
-                        AdminPage(navController) }
+                        AdminPage(navController)
+                    }
+                    composable(
+                        "eventDetail/{name}/{location}/{price}/{imageUrl}",
+                        arguments = listOf(
+                            navArgument("name") { type = NavType.StringType },
+                            navArgument("location") { type = NavType.StringType },
+                            navArgument("price") { type = NavType.FloatType },
+                            navArgument("imageUrl") { type = NavType.StringType }
+                        )
+                    ) { backStackEntry ->
+                        val name = backStackEntry.arguments?.getString("name")
+                        val location = backStackEntry.arguments?.getString("location")
+                        val price = backStackEntry.arguments?.getFloat("price")
+                        val imageUrl = backStackEntry.arguments?.getString("imageUrl")
+
+                        if (name != null && location != null && price != null && imageUrl != null) {
+                            EventDetailScreen(name, location, price, imageUrl)
+                        }
+                    }
                 }
             }
         }

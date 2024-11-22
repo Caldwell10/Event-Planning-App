@@ -24,8 +24,7 @@ android {
     }
 
     composeOptions {
-        // Ensure the Compose Compiler version matches the BOM version
-        kotlinCompilerExtensionVersion = "1.5.3" // Latest stable version
+        kotlinCompilerExtensionVersion = "1.5.10"
     }
 
     kotlinOptions {
@@ -40,17 +39,22 @@ dependencies {
     // Core Compose dependencies
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-text")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
 
     // Firebase dependencies
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.storage.ktx)
 
+    // Retrofit and OkHttp for M-Pesa API calls
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
 
     // Jetpack Navigation for Compose
     implementation("androidx.navigation:navigation-compose:2.7.2")
-    implementation(libs.firebase.storage.ktx)
 
     // Testing dependencies
     testImplementation(libs.junit)
@@ -66,5 +70,12 @@ dependencies {
     // Hilt dependencies
     implementation(libs.dagger.hilt)
     kapt(libs.dagger.hilt.compiler)
+
+    // Image loading
     implementation("io.coil-kt:coil-compose:2.4.0")
+
+    // OneSignal push notifications
+    implementation("com.onesignal:OneSignal:[5.0.0, 5.99.99]")
+    implementation("com.squareup.okhttp3:okhttp:4.10.0") // For making HTTP requests
+
 }
