@@ -31,6 +31,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.IOException
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminPage(navController: NavController) {
     val firestore = FirebaseFirestore.getInstance()
@@ -39,6 +40,8 @@ fun AdminPage(navController: NavController) {
     var eventName by remember { mutableStateOf("") }
     var eventLocation by remember { mutableStateOf("") }
     var eventPrice by remember { mutableStateOf("") }
+    var eventDescription by remember { mutableStateOf("") }
+    var eventDate by remember { mutableStateOf("") }
     var eventImageUri by remember { mutableStateOf<String?>(null) }
     var selectedImageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
     var isUploading by remember { mutableStateOf(false) }
@@ -59,6 +62,7 @@ fun AdminPage(navController: NavController) {
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
+        // Event Name
         OutlinedTextField(
             value = eventName,
             onValueChange = { eventName = it },
@@ -67,6 +71,7 @@ fun AdminPage(navController: NavController) {
         )
         Spacer(modifier = Modifier.height(8.dp))
 
+        // Event Location
         OutlinedTextField(
             value = eventLocation,
             onValueChange = { eventLocation = it },
@@ -75,15 +80,35 @@ fun AdminPage(navController: NavController) {
         )
         Spacer(modifier = Modifier.height(8.dp))
 
+        // Event Price
         OutlinedTextField(
             value = eventPrice,
             onValueChange = { eventPrice = it },
-            label = { Text("Event Price") },
+            label = { Text("Event Price (Ksh)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp))
 
+        // Event Description
+        OutlinedTextField(
+            value = eventDescription,
+            onValueChange = { eventDescription = it },
+            label = { Text("Event Description") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Event Date
+        OutlinedTextField(
+            value = eventDate,
+            onValueChange = { eventDate = it },
+            label = { Text("Event Date (e.g., Dec 1, 2024)") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Image Preview
         if (selectedImageBitmap != null) {
             Image(
                 bitmap = selectedImageBitmap!!,
@@ -94,6 +119,7 @@ fun AdminPage(navController: NavController) {
             )
         }
 
+        // Image Picker
         val imagePickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             uri?.let {
                 eventImageUri = it.toString()
@@ -107,9 +133,10 @@ fun AdminPage(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Create Event Button
         Button(
             onClick = {
-                if (eventName.isBlank() || eventLocation.isBlank() || eventPrice.isBlank() || eventImageUri == null) {
+                if (eventName.isBlank() || eventLocation.isBlank() || eventPrice.isBlank() || eventDescription.isBlank() || eventDate.isBlank() || eventImageUri == null) {
                     Toast.makeText(context, "All fields are required", Toast.LENGTH_LONG).show()
                 } else {
                     isUploading = true
@@ -121,6 +148,8 @@ fun AdminPage(navController: NavController) {
                                     "name" to eventName,
                                     "location" to eventLocation,
                                     "price" to eventPrice.toDouble(),
+                                    "eventDescription" to eventDescription,
+                                    "eventDate" to eventDate,
                                     "image" to imageUrl
                                 )
                             )
@@ -187,7 +216,7 @@ fun sendNewEventNotification(eventName: String, eventLocation: String, eventImag
     val request = Request.Builder()
         .url("https://onesignal.com/api/v1/notifications")
         .post(body)
-        .addHeader("Authorization", "os_v2_app_axt254nfu5etzpdf6cjnojj376zex7lc52vu5vu25yv72qkuq6swljetgiesdygetl6fkrefimtzo6fko254kxtmxr7cuflbdfix63a") // Replace with your REST API Key
+        .addHeader("Authorization", "REPLACE_WITH_YOUR_REST_API_KEY")
         .addHeader("Content-Type", "application/json")
         .build()
 

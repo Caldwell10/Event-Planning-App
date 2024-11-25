@@ -141,7 +141,10 @@ fun Register(navController: NavController) {
                             firestore,
                             onSuccess = {
                                 Toast.makeText(context, "Registration successful!", Toast.LENGTH_LONG).show()
-                                navController.navigate("home") { popUpTo("register") { inclusive = true } }
+                                // Navigate to Profile Setup Screen
+                                navController.navigate("profileSetup") {
+                                    popUpTo("register") { inclusive = true }
+                                }
                             },
                             onError = { errorMessage = it },
                             onLoading = { isLoading = it }
@@ -215,10 +218,6 @@ fun registerUser(
                         .document(it.uid)
                         .set(userData)
                         .addOnSuccessListener {
-                            // Send welcome notification
-                            CoroutineScope(Dispatchers.IO).launch {
-                                sendWelcomeNotification(email)
-                            }
                             onSuccess()
                         }
                         .addOnFailureListener { e -> onError(e.localizedMessage ?: "Error saving user to Firestore") }
@@ -233,7 +232,6 @@ fun registerUser(
             onLoading(false)
         }
 }
-
 // Function to send a welcome push notification
 suspend fun sendWelcomeNotification(email: String) {
     val client = OkHttpClient()
@@ -262,5 +260,4 @@ suspend fun sendWelcomeNotification(email: String) {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }
-}
+    }}

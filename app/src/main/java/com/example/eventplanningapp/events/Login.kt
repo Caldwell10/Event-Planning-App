@@ -27,6 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Login(navController: NavController) {
     val context = LocalContext.current
@@ -38,9 +39,10 @@ fun Login(navController: NavController) {
     var password by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
-    BackHandler {
 
-    }
+    // Prevent back navigation from Login
+    BackHandler { /* Do nothing to disable back navigation */ }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -117,14 +119,14 @@ fun Login(navController: NavController) {
                             password,
                             firebaseAuth,
                             firestore,
-                            onSuccess = { role ->
+                            onRoleRedirect = { role ->
                                 if (role == "admin") {
                                     navController.navigate("admin") {
-                                        popUpTo("login") { inclusive = true } // Clear login from back stack
+                                        popUpTo(0) { inclusive = true } // Clear back stack
                                     }
                                 } else {
                                     navController.navigate("home") {
-                                        popUpTo("login") { inclusive = true } // Clear login from back stack
+                                        popUpTo(0) { inclusive = true } // Clear back stack
                                     }
                                 }
                             },
@@ -176,23 +178,22 @@ suspend fun loginUser(
     password: String,
     firebaseAuth: FirebaseAuth,
     firestore: FirebaseFirestore,
-    onSuccess: (String?) -> Unit,
+    onRoleRedirect: (String) -> Unit,
     onError: (String) -> Unit,
     onLoading: (Boolean) -> Unit
 ) {
     onLoading(true)
     try {
+        // Sign in the user
         val authResult = firebaseAuth.signInWithEmailAndPassword(email, password).await()
-        val userId = authResult.user?.uid
+        val userId = authResult.user?.uid ?: throw Exception("User ID not found.")
 
-        if (userId != null) {
-            // Fetch user role from Firestore
-            val userDoc = firestore.collection("users").document(userId).get().await()
-            val role = userDoc.getString("role")
-            onSuccess(role)
-        } else {
-            onError("User ID not found.")
-        }
+        // Fetch user role from Firestore
+        val userDoc = firestore.collection("users").document(userId).get().await()
+        val role = userDoc.getString("role") ?: "user" // Default role is 'user'
+
+        // Redirect based on role
+        onRoleRedirect(role)
     } catch (e: Exception) {
         onError(e.localizedMessage ?: "Login failed.")
     } finally {

@@ -30,6 +30,17 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    packagingOptions {
+        resources {
+            excludes.add("META-INF/NOTICE.md")
+            excludes.add("META-INF/LICENSE.md")
+            excludes.add("META-INF/DEPENDENCIES")
+            excludes.add("META-INF/NOTICE")
+            excludes.add("META-INF/LICENSE")
+        }
+    }
+
 }
 
 dependencies {
@@ -78,4 +89,12 @@ dependencies {
     implementation("com.onesignal:OneSignal:[5.0.0, 5.99.99]")
     implementation("com.squareup.okhttp3:okhttp:4.10.0") // For making HTTP requests
 
+    // Icons
+    implementation("androidx.compose.material:material-icons-extended:1.4.3")
+
+    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11")
+
+    // JavaMail Setup
+    implementation("com.sun.mail:android-mail:1.6.7")
+    implementation("com.sun.mail:android-activation:1.6.7")
 }

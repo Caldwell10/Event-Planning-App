@@ -25,7 +25,9 @@ fun EventItem(event: Event, navController: NavController) {
             .clickable {
                 // Encode the imageUrl for safe navigation
                 val encodedImageUrl = URLEncoder.encode(event.imageUrl, StandardCharsets.UTF_8.toString())
-                navController.navigate("eventDetail/${event.name}/${event.location}/${event.price}/${encodedImageUrl}")
+                val encodedDescription = URLEncoder.encode(event.description, StandardCharsets.UTF_8.toString())
+                val encodedDate = URLEncoder.encode(event.date, StandardCharsets.UTF_8.toString())
+                navController.navigate("eventDetail/${event.name}/${event.location}/${event.price}/${encodedImageUrl}/${encodedDescription}/${encodedDate}")
             },
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp), // Depth effect
         colors = CardDefaults.cardColors(
@@ -63,11 +65,19 @@ fun EventItem(event: Event, navController: NavController) {
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray
                 )
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // Event Date
+                Text(
+                    text = "Date: ${event.date}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.secondary
+                )
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Event Price
                 Text(
-                    text = "Price: $${event.price}",
+                    text = "Price: Ksh ${event.price}",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                     color = MaterialTheme.colorScheme.primary
                 )
