@@ -85,10 +85,6 @@ dependencies {
     // Image loading
     implementation("io.coil-kt:coil-compose:2.4.0")
 
-    // OneSignal push notifications
-    implementation("com.onesignal:OneSignal:[5.0.0, 5.99.99]")
-    implementation("com.squareup.okhttp3:okhttp:4.10.0") // For making HTTP requests
-
     // Icons
     implementation("androidx.compose.material:material-icons-extended:1.4.3")
 

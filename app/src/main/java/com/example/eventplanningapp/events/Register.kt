@@ -232,32 +232,4 @@ fun registerUser(
             onLoading(false)
         }
 }
-// Function to send a welcome push notification
-suspend fun sendWelcomeNotification(email: String) {
-    val client = OkHttpClient()
-    val jsonObject = JSONObject().apply {
-        put("app_id", "05e7aef1-a5a7-493c-bc65-f092d7253bff") // Replace with your OneSignal App ID
-        put("include_external_user_ids", arrayOf(email)) // Target user by email
-        put("headings", JSONObject().put("en", "Welcome to Evently!"))
-        put("contents", JSONObject().put("en", "Thank you for joining us. Explore exciting events!"))
-    }
 
-    val body = jsonObject.toString().toRequestBody("application/json".toMediaTypeOrNull())
-    val request = Request.Builder()
-        .url("https://onesignal.com/api/v1/notifications")
-        .post(body)
-        .addHeader("Authorization", "zex7lc52vu5vu25yv72qkuq6s")
-        .addHeader("Content-Type", "application/json")
-        .build()
-
-    withContext(Dispatchers.IO) {
-        try {
-            client.newCall(request).execute().use { response ->
-                if (!response.isSuccessful) {
-                    println("Failed to send notification: ${response.body?.string()}")
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }}
