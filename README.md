@@ -2,7 +2,8 @@
 
 An Android app built with **Kotlin** and **Firebase** to help users browse, book, and manage events. After successful registration, the app sends a confirmation **email ticket** to the user.
 
-![UI Preview](evently.png)
+<img src="evently.png" alt="UI Preview" width="400"/>
+
 
 ---
 
